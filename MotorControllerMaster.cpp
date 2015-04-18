@@ -48,12 +48,13 @@ void MotorControllerMaster::coast(){
 }
 
 void MotorControllerMaster::getEncoder(long* left, long* right){
-	uint32_t remoteleft;
-	uint32_t remoteright;
+	int32_t remoteleft;
+	int32_t remoteright;
 	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
 	Wire.write(COMMAND_REPORTENCODER);
 	Wire.endTransmission();	
 	int i = Wire.requestFrom(MOTOR_CONTROLLER_ADDRESS, 8);
+	while (!Wire.available());
 	remoteleft = Wire.read();
 	remoteleft |= Wire.read() << 8;
 	remoteleft |= Wire.read() << 16;
