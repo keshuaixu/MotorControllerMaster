@@ -13,6 +13,7 @@ public:
 	void coast();
 	void getEncoder(long* left, long* right);
 	byte isStandby();
+	void heartbeat();
 };
 
 #endif

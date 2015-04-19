@@ -76,3 +76,9 @@ byte MotorControllerMaster::isStandby(){
 	isStandby = Wire.read();
 	return isStandby;
 }
+
+void MotorControllerMaster::heartbeat(){
+	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
+	Wire.write(COMMAND_HEARTBEAT);
+	Wire.endTransmission();		
+}
