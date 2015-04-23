@@ -54,14 +54,15 @@ void MotorControllerMaster::getEncoder(long* left, long* right){
 	Wire.write(COMMAND_REPORTENCODER);
 	Wire.endTransmission();	
 	Wire.requestFrom(MOTOR_CONTROLLER_ADDRESS, 8);
-	remoteleft = Wire.read();
-	remoteleft |= Wire.read() << 8;
-	remoteleft |= Wire.read() << 16;
-	remoteleft |= Wire.read() << 24;
-	remoteright = Wire.read();
-	remoteright |= Wire.read() << 8;
-	remoteright |= Wire.read() << 16;
-	remoteright |= Wire.read() << 24;	
+	delayMicroseconds(300);
+	remoteleft = (int32_t) Wire.read();
+	remoteleft |= (int32_t) Wire.read() << 8UL;
+	remoteleft |= (int32_t) Wire.read() << 16UL;
+	remoteleft |= (int32_t) Wire.read() << 24UL;
+	remoteright = (int32_t) Wire.read();
+	remoteright |= (int32_t) Wire.read() << 8UL;
+	remoteright |= (int32_t) Wire.read() << 16UL;
+	remoteright |= (int32_t) Wire.read() << 24UL;	
 	*left = remoteleft;
 	*right = remoteright;
 }
@@ -72,6 +73,7 @@ byte MotorControllerMaster::isStandby(){
 	Wire.write(COMMAND_REPORTSTANDBY);
 	Wire.endTransmission();	
 	Wire.requestFrom(MOTOR_CONTROLLER_ADDRESS, 1);
+	delayMicroseconds(300);
 	int8_t standby = Wire.read();
 	return isStandby;
 }
