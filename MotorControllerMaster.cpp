@@ -16,7 +16,11 @@ void MotorControllerMaster::setAcceleration(unsigned int forwardAcceleration, un
 	send[8] = ccwDeceleration >> 8;
 	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
 	Wire.write(send,9);
-	Wire.endTransmission();
+	int e = Wire.endTransmission();
+	if (e != 0){
+		Serial.println("i2c error");
+		return;
+	}
 }
 
 void MotorControllerMaster::goVelocity(int forwardVelocity, int ccwVelocity){
@@ -28,7 +32,11 @@ void MotorControllerMaster::goVelocity(int forwardVelocity, int ccwVelocity){
 	send[4] = ccwVelocity >> 8;
 	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
 	Wire.write(send,5);
-	Wire.endTransmission();
+	int e = Wire.endTransmission();
+	if (e != 0){
+		Serial.println("i2c error");
+		return;
+	}
 }
 
 void MotorControllerMaster::brake(){
@@ -36,7 +44,11 @@ void MotorControllerMaster::brake(){
 	send[0] = COMMAND_BRAKE;
 	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
 	Wire.write(send,1);
-	Wire.endTransmission();	
+	int e = Wire.endTransmission();
+	if (e != 0){
+		Serial.println("i2c error");
+		return;
+	}
 }
 
 void MotorControllerMaster::coast(){
@@ -44,7 +56,11 @@ void MotorControllerMaster::coast(){
 	send[0] = COMMAND_COAST;
 	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
 	Wire.write(send,1);
-	Wire.endTransmission();	
+	int e = Wire.endTransmission();
+	if (e != 0){
+		Serial.println("i2c error");
+		return;
+	}
 }
 
 void MotorControllerMaster::getEncoder(long* left, long* right){
@@ -52,9 +68,12 @@ void MotorControllerMaster::getEncoder(long* left, long* right){
 	int32_t remoteright;
 	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
 	Wire.write(COMMAND_REPORTENCODER);
-	Wire.endTransmission();	
+	int e = Wire.endTransmission();
+	if (e != 0){
+		Serial.println("i2c error");
+		return;
+	}
 	Wire.requestFrom(MOTOR_CONTROLLER_ADDRESS, 8);
-	delayMicroseconds(300);
 	remoteleft = (int32_t) Wire.read();
 	remoteleft |= (int32_t) Wire.read() << 8UL;
 	remoteleft |= (int32_t) Wire.read() << 16UL;
@@ -68,13 +87,15 @@ void MotorControllerMaster::getEncoder(long* left, long* right){
 }
 
 byte MotorControllerMaster::isStandby(){
-	byte isStandby;
 	Wire.beginTransmission(MOTOR_CONTROLLER_ADDRESS);
 	Wire.write(COMMAND_REPORTSTANDBY);
-	Wire.endTransmission();	
+	int e = Wire.endTransmission();	
+	if (e != 0){
+		Serial.println("i2c error");
+		return -2;
+	}
 	Wire.requestFrom(MOTOR_CONTROLLER_ADDRESS, 1);
-	delayMicroseconds(300);
-	int8_t standby = Wire.read();
+	int8_t isStandby = Wire.read();
 	return isStandby;
 }
 
